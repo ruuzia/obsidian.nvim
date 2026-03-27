@@ -125,7 +125,7 @@ function NewNoteSourceBase:process_completion(cc)
     if Obsidian.opts.link.style == "wiki" then
       label = string.format("[[%s]] (create)", new_note_opts.label)
     elseif Obsidian.opts.link.style == "markdown" then
-      label = string.format("[%s](…) (create)", new_note_opts.label)
+      label = string.format("[[%s](…) (create)", new_note_opts.label)
     elseif type(Obsidian.opts.link.style) == "function" then
       label = Obsidian.opts.link.style { label = new_note_opts.label, path = "…" } .. " (create)"
     else
@@ -147,6 +147,7 @@ function NewNoteSourceBase:process_completion(cc)
     items[#items + 1] = {
       documentation = documentation,
       sortText = new_note_opts.label,
+      filterText = string.format("[[%s]]", new_note_opts.label),
       label = label,
       kind = vim.lsp.protocol.CompletionItemKind.Reference,
       textEdit = {

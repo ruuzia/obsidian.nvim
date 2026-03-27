@@ -234,7 +234,9 @@ function RefsSourceBase:process_search_results(cc, results)
     if Obsidian.opts.link.style == "wiki" then
       label = string.format("[[%s]]", option.label)
     elseif Obsidian.opts.link.style == "markdown" then
-      label = string.format("[%s](…)", option.label)
+      -- the start of the label must match exactly the text being replaced for things
+      -- to work nicely
+      label = string.format("[[%s](…)", option.label)
     elseif type(Obsidian.opts.link.style) == "function" then
       label = Obsidian.opts.link.style { label = option.label or "", path = "" }
     else
@@ -243,7 +245,12 @@ function RefsSourceBase:process_search_results(cc, results)
 
     table.insert(completion_items, {
       documentation = option.documentation,
-      sortText = option.sort_text,
+      sortText = option.label,
+      -- We can change filterText to control the text that is matched against
+      -- when filtering completions. But, if `filterText` has a different
+      -- prefix from `label`, then highlighting within the completion menu
+      -- won't work.
+      filterText = string.format("[[%s]]", option.label),
       label = label,
       kind = vim.lsp.protocol.CompletionItemKind.Reference,
       textEdit = {
